@@ -2,7 +2,6 @@
 import { TILE } from '../world/tiles.js';
 import { SAMPLES } from '../data/items.js';
 import { PLANTS, ANIMALS } from '../data/species.js';
-import { Crate } from '../entities/crate.js';
 import { openLife, openSow } from '../ui/lifepanel.js';
 
 export const JOBS = {
@@ -95,9 +94,8 @@ export class Life {
       g.toast(`Trois jeunes ${n.toLowerCase()} sont prêts à être relâchés (carnet, ou ici même).`, 'good');
       g.setFlag('premier_animal');
     } else if (j.kind === 'organe') {
-      const c = new Crate(s.cx, s.y + s.h, { module: j.model, label: 'Organe d’équilibre', organic: true });
-      g.entities.push(c);
-      g.toast('L’organe d’équilibre a fini de croître. Il doit être porté jusqu’au Dormeur.', 'good');
+      inv.items[j.model] = (inv.items[j.model] || 0) + 1;
+      g.toast('L’organe d’équilibre a fini de croître. Nadja le scelle dans un bocal : tu peux l’emporter et le greffer dans un colosse.', 'good');
     } else if (j.kind === 'humain') {
       g.story && g.story.humanBorn(s, j.extra);
     }

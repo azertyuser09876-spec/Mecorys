@@ -19,6 +19,7 @@ import { Survivors } from './systems/survivors.js';
 import { Life } from './systems/life.js';
 import { openJournal } from './ui/journal.js';
 import { Story } from './story/story.js';
+import { ColossusSystem } from './systems/colossi.js';
 import { STRUCT } from './data/structures.js';
 import { RESOURCES, SAMPLES, costText } from './data/items.js';
 import { LORE, JOURNAL, REGION_SUB } from './data/texts.js';
@@ -54,6 +55,7 @@ export class Game {
     this.survivors = this.addSystem(new Survivors(this));
     this.life = this.addSystem(new Life(this));
     this.story = this.addSystem(new Story(this));
+    this.colossusSys = this.addSystem(new ColossusSystem(this));
     this.paused = false;
     this.debug = false;
     this.fps = 60;
@@ -463,7 +465,7 @@ export class Game {
 
     // Invite contextuelle
     let target = null;
-    if (!ui.blocking() && !this.building.active && !this.player.riding) target = this.nearestInteractable();
+    if (!ui.blocking() && !this.building.active && !this.player.riding && !this.player.frozen) target = this.nearestInteractable();
     this.target = target;
     if (target) {
       const e = target.e;
@@ -520,8 +522,11 @@ export class Game {
   }
 
   // --- Rendu : appelé par le moteur de rendu ---------------------------------------
+  drawWorldBack(g, view) {
+    for (const c of this.colossi) if (c.buried) c.drawBehind(g, this, view);
+  }
+
   drawWorld(g, view) {
-    for (const c of this.colossi) if (c.buried) c.drawBehind && c.drawBehind(g, this, view);
     this.ecology.drawBack(g, view);
     for (const s of this.structures) if (this.inView(s, view)) s.draw(g, this);
     for (const c of this.colossi) if (c.drawBody) c.drawBody(g, this, view);
@@ -589,6 +594,7 @@ export class Game {
       if (L) out.push(L);
     }
     for (const sys of this.systems) if (sys.lights) sys.lights(out, view);
+    for (const c of this.colossi) c.lights(out);
     this.ecology.lights(out, view);
     return out;
   }

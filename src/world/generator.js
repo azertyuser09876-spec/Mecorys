@@ -283,6 +283,21 @@ export function generateWorld(seed = 1729) {
   }
   poi('dormeur', 318, 112);
 
+  // L'ancien canal enfoui : une rigole de béton sous le sable, vers la fonderie
+  {
+    const x0 = 432;
+    const x1 = 514;
+    const tops = [];
+    for (let x = x0; x <= x1; x++) {
+      const sy = surf(x);
+      tops.push(sy);
+      world.raw(x, sy + 3, T.CONCRETE);
+      world.raw(x, sy + 4, T.CONCRETE);
+    }
+    poi('canal', 472, surf(472) + 1, { x0, x1, tops });
+    poi('lore', x0 - 3, surf(x0 - 3), { id: 'canal' });
+  }
+
   // --- 3. La Fonderie Engloutie -----------------------------------------------------
   const FG = 116;
   // Hall A : l'atelier abandonné

@@ -112,6 +112,8 @@ export class Renderer {
     // blocs modifiés
     for (const key of world.dirty) this.invalidate('w' + key);
     world.dirty.clear();
+    const view0 = { x: camX, y: camY, w: cam.w, h: cam.h };
+    game.drawWorldBack(w, view0);
     const cx0 = Math.floor(camX / CH_PX);
     const cy0 = Math.floor(camY / CH_PX);
     const cx1 = Math.floor((camX + cam.w) / CH_PX);

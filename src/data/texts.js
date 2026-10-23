@@ -86,6 +86,10 @@ export const LORE = {
     title: 'Traces',
     text: 'Des empreintes de pas, très anciennes, pétrifiées dans la boue. Toutes tournées vers l’est.',
   },
+  canal: {
+    title: 'Lèvre de béton',
+    text: 'Le bord d’un canal dépasse du sable. Il menait l’eau de la fonderie jusqu’aux champs, quand il y avait des champs. Il faudrait un bras de géant pour le rouvrir.',
+  },
   coeur: {
     title: 'Le Cœur',
     text: 'Il emplit le ciel. Sous tes pieds, une pulsation si lente qu’elle pourrait être celle du monde.',
@@ -113,6 +117,7 @@ export const JOURNAL = {
   nadja: 'Nadja s’est éveillée dans sa capsule. Elle ne sait pas depuis combien de temps elle dormait.',
   dormeur: 'Le Dormeur, sous le sable des dunes. Il lui manque un organe d’équilibre et plusieurs pièces.',
   dormeur_eveille: 'Le Dormeur s’est levé. Le sable a coulé de ses épaules comme de l’eau.',
+  canal: 'L’ancien canal enfoui sous les dunes, à l’est du Dormeur : son bras pourrait le rouvrir et rendre l’eau au désert.',
   chantier: 'Je peux construire mon propre colosse. Il me faudra des heures, beaucoup de ressources, et de l’aide.',
   abime: 'Aucun pont humain ne franchira l’Abîme. Il faudrait un colosse capable de le traverser.',
   pont: 'Un pont de colosse enjambe l’Abîme. Il restera là bien après moi.',
