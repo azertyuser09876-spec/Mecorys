@@ -41,7 +41,10 @@ export class Ecology {
       if (r.id === 'fonderie') z.plants.mousse = 0.18 + hash1(z.i, 3) * 0.2;
     }
     for (const z of this.under) if (z) z.plants.mousse = 0.3 + hash1(z.i, 4) * 0.2;
-    world.listeners.push((x, y) => this.surfCache.delete(Math.floor(x / CHUNK) + ',' + Math.floor(y / CHUNK)));
+    world.listeners.push((x, y, old) => {
+      if (old === -1) this.surfCache.clear();
+      else this.surfCache.delete(Math.floor(x / CHUNK) + ',' + Math.floor(y / CHUNK));
+    });
   }
 
   spawnNests(pois) {

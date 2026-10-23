@@ -224,7 +224,7 @@ export class Player {
 
     // --- Au sol ou en l'air
     const crouch = this.onGround && my > 0 && !climbG;
-    const target = mx * (run ? RUN : WALK) * (crouch ? 0.35 : 1);
+    const target = mx * (run ? RUN : WALK) * (crouch ? 0.35 : 1) * (this.dragging ? 0.5 : 1);
     const acc = this.onGround ? (mx !== 0 ? ACC : DEC) : AIR_ACC;
     if (this.vx < target) this.vx = Math.min(target, this.vx + acc * dt);
     else if (this.vx > target) this.vx = Math.max(target, this.vx - acc * dt);

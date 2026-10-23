@@ -75,6 +75,25 @@ export class World {
     this.markDirty(x, y);
   }
 
+  // Remplit un rectangle sans recalcul tuile par tuile (événements à grande échelle).
+  setArea(x0, y0, x1, y1, id, filter) {
+    x0 = Math.max(0, x0);
+    y0 = Math.max(0, y0);
+    x1 = Math.min(this.w - 1, x1);
+    y1 = Math.min(this.h - 1, y1);
+    for (let y = y0; y <= y1; y++)
+      for (let x = x0; x <= x1; x++) {
+        const i = y * this.w + x;
+        if (filter && !filter(this.tiles[i], x, y)) continue;
+        this.tiles[i] = id;
+      }
+    for (let x = x0; x <= x1; x++) this.updateTop(x);
+    this.relight(x0 - 16, y0 - 16, x1 + 16, y1 + 16);
+    this.markAreaDirty(x0 - 1, y0 - 1, x1 + 1, y1 + 1);
+    for (const l of this.listeners) l(x0, y0, -1, id);
+    for (const l of this.listeners) l(x1, y1, -1, id);
+  }
+
   markDirty(x, y) {
     const cx = Math.floor(x / CHUNK);
     const cy = Math.floor(y / CHUNK);

@@ -15,11 +15,16 @@ import { Lieux } from './systems/lieux.js';
 import { Building } from './systems/building.js';
 import { Ecology } from './systems/ecology.js';
 import { Robots } from './systems/robots.js';
+import { Survivors } from './systems/survivors.js';
+import { Life } from './systems/life.js';
+import { openJournal } from './ui/journal.js';
+import { Story } from './story/story.js';
 import { STRUCT } from './data/structures.js';
 import { RESOURCES, SAMPLES, costText } from './data/items.js';
 import { LORE, JOURNAL, REGION_SUB } from './data/texts.js';
 
-export const DAY_LENGTH = 720; // secondes réelles pour 24 h
+import { DAY_LENGTH } from './core/config.js';
+export { DAY_LENGTH };
 const INTERACT_RANGE = 30;
 
 export class Game {
@@ -46,6 +51,9 @@ export class Game {
     this.ecology = new Ecology(this);
     this.systems = []; // systèmes additionnels : update(dt), draw...(g)
     this.robots = this.addSystem(new Robots(this));
+    this.survivors = this.addSystem(new Survivors(this));
+    this.life = this.addSystem(new Life(this));
+    this.story = this.addSystem(new Story(this));
     this.paused = false;
     this.debug = false;
     this.fps = 60;
@@ -495,6 +503,7 @@ export class Game {
   handleKeys() {
     const input = this.input;
     if (input.hit('build')) this.building.toggle();
+    if (input.hit('journal')) openJournal(this);
     if (input.hit('lantern')) {
       this.player.lantern = !this.player.lantern;
       this.audio && this.audio.sfx('click');
