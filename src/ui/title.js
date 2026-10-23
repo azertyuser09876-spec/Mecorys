@@ -34,9 +34,16 @@ export function showTitle(ui, { onNew, onContinue, audio }) {
         'button',
         {
           class: 'btn big' + (save ? '' : ' primary'),
-          onclick: async () => {
+          onclick: (e) => {
             audio && audio.start();
-            if (save && !confirm('Commencer une nouvelle partie effacera la sauvegarde actuelle. Continuer ?')) return;
+            // Confirmation dans la page : un second clic efface la sauvegarde.
+            const btn = e.currentTarget;
+            if (save && !btn.dataset.armed) {
+              btn.dataset.armed = '1';
+              btn.textContent = 'Effacer la sauvegarde et recommencer';
+              btn.classList.add('danger');
+              return;
+            }
             wrap.remove();
             onNew();
           },

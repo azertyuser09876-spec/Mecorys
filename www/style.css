@@ -272,6 +272,10 @@ button.btn.primary {
 button.btn.primary:hover:not(:disabled) {
   background: #7d5832;
 }
+button.btn.danger {
+  background: #5a2a22;
+  border-color: var(--bad);
+}
 button.btn:disabled {
   opacity: 0.45;
   cursor: default;
