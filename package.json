@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "esbuild src/main.js --bundle --format=esm --outfile=www/mecorys.js --servedir=www --watch",
     "build": "node tools/build.mjs",
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.js",
     "smoke": "node tools/smoke.mjs"
   },
   "devDependencies": {

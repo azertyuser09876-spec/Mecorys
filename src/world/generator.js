@@ -414,12 +414,11 @@ export function generateWorld(seed = 1729) {
     G.hline(871, 872, 58, T.METAL);
     G.hline(877, 885, 58, T.METAL);
     G.fill(886, 54, 886, 57, T.AIR);
-    G.fill(878, 55, 881, 57, T.METAL);
     G.fill(871, 49, 885, 49, T.PIPE);
     G.hline(873, 876, 58, T.GRATE);
     G.vline(875, 55, 186, T.LADDER);
-    poi('pompe', 883, 58, { id: 'pompe_barrage' });
-    poi('vanne', 879, 54, {});
+    poi('pompe', 878, 58, { id: 'pompe_barrage' });
+    poi('vanne', 871, 58, {});
     poi('plan', 872, 58, { id: 'pompe' });
     poi('lore', 877, 58, { id: 'barrage' });
 
@@ -702,11 +701,7 @@ export function generateWorld(seed = 1729) {
       }
     G.fill(x0, g - 4, x0 + 1, g - 1, T.AIR);
     G.fill(x1 - 1, g - 4, x1, g - 1, T.AIR);
-    // Matrice centrale (structure organique)
-    G.fill(cx - 10, g - 6, cx + 10, g - 1, T.ORGANIC);
-    G.fill(cx - 7, g - 12, cx + 7, g - 7, T.ORGANIC);
-    G.fill(cx - 3, g - 16, cx + 3, g - 13, T.MEMBRANE);
-    G.fill(cx - 2, g - 22, cx + 2, g - 17, T.ORGANIC);
+    // Racines de la Matrice (la Matrice elle-même est une structure dessinée)
     for (let k = -1; k <= 1; k += 2) {
       for (let i = 0; i < 26; i++) world.raw(cx + k * (11 + i), g - 2 - Math.round(Math.sin(i / 8) * 3), T.ROOT);
     }
@@ -726,7 +721,7 @@ export function generateWorld(seed = 1729) {
     G.fill(x1 - 36, g, x1 - 35, g, T.AIR);
     G.vline(x1 - 36, g - 1, g + 11, T.LADDER);
     G.hline(x1 - 30, x1 - 10, g + 7, T.PLATFORM);
-    poi('matrice', cx, g - 6, {});
+    poi('matrice', cx, g, {});
     poi('pod', x1 - 16, g - 20, { id: 'nadja' });
     poi('sample', x1 - 12, g + 7, { id: 'tissu_equilibre' });
     poi('sample', x1 - 24, g + 12, { id: 'empreinte' });
