@@ -1,0 +1,16 @@
+{
+  "name": "mecorys",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jeu d'exploration et de reconstruction dans un monde immense, silencieux et presque privé de vie.",
+  "type": "module",
+  "scripts": {
+    "dev": "esbuild src/main.js --bundle --format=esm --outfile=www/mecorys.js --servedir=www --watch",
+    "build": "node tools/build.mjs",
+    "test": "node --test tests/",
+    "smoke": "node tools/smoke.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

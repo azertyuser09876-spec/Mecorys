@@ -1,0 +1,34 @@
+:root {
+  --ink: #efe6d6;
+  --ink-dim: #b8ab96;
+  --panel: rgba(22, 20, 19, 0.86);
+  --panel-edge: rgba(214, 190, 150, 0.28);
+  --accent: #d8a35c;
+  --good: #9fc28a;
+  --bad: #d97a5e;
+  --font: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0d0c0b;
+  color: var(--ink);
+  font-family: var(--font);
+}
+
+#screen {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: crosshair;
+}
+
+#ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
