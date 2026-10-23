@@ -550,24 +550,50 @@ Le point F proposait que les colosses puissent remplir toutes sortes de fonction
 
 ---
 
-# 15. Points volontairement encore ouverts
+## Étape suivante : perspective, technique et ambition
 
-Ces éléments ne sont pas encore décidés et ne doivent pas être imposés sans une nouvelle phase de discussion :
+> 1, je ne compte pas faire les assets et le son. 2, Plutot un 2D, vu de côté, mais avec une représentation absrtaite possible des colosses, on peut se ballader dessus et dedans, pour construire chaque module on est pas obligé de tout voir, mais comme dans rain world, on peut voir une carte abstraite du monde, et y voir l'immensité du collosse dessus. 3, je pensais à de l'html et js. 4, tout le jeu complet s'il te plait. Et j'ai confiance en toi pour les assets et le son, ainsi que les cénématiques etc... Mecorys est le nom du jeu. Pour l'instant que PC
 
-- nom du jeu ;
-- origine précise du protagoniste ;
-- cause exacte de la chute de la vie ;
-- raison de la disparition de la civilisation ;
-- fonctionnement narratif exact des organes de colosses ;
-- nombre de survivants ;
-- structure précise de la carte ;
-- caméra et perspective ;
-- système de combat ;
-- présence ou absence de multijoueur ;
-- direction graphique exacte ;
-- moteur et organisation technique ;
-- conditions de victoire ou de fin ;
-- conséquences morales exactes de la création de vie.
+Correspondance des questions posées :
+
+- 1 : l'expérience et le temps disponibles (l'utilisateur ne fera ni les graphismes ni le son) ;
+- 2 : la perspective (2D vue de côté, colosses parcourables dessus et dedans, carte abstraite du monde) ;
+- 3 : la technique (HTML et JavaScript) ;
+- 4 : le premier prototype (le jeu complet est demandé).
+
+---
+
+# 15. Points décidés et points encore ouverts
+
+## 15.1 Décidé par l'utilisateur
+
+- **Nom du jeu** : Mecorys.
+- **Caméra et perspective** : 2D, vue de côté. Les colosses sont parcourables dessus et dedans ; la construction de chaque module ne demande pas de tout voir ; une carte abstraite du monde montre l'immensité des colosses.
+- **Moteur et organisation technique** : HTML et JavaScript.
+- **Plateforme** : PC pour l'instant.
+- **Graphismes, son et cinématiques** : confiés à Claude.
+
+## 15.2 Choix provisoires faits par Claude pendant le développement
+
+Ces choix ont été nécessaires pour écrire un jeu complet. Ils sont **provisoires** et restent à valider ou à remplacer lors d'une prochaine discussion.
+
+- **Origine du protagoniste** : le dernier membre d'une caravane du désert ; le puits du camp s'est tu, les autres sont partis vers le nord, le joueur part vers l'est.
+- **Cause de la chute de la vie** : toute la vie dépendait du Cœur, une immense machine vivante à l'est, qui envoyait la Sève dans les conduites jusqu'aux chambres de croissance. Les Anciens lui ont demandé toujours plus, en particulier des colosses, jusqu'à l'épuiser : le Cœur s'est tu.
+- **Disparition de la civilisation** : sans la Sève, les chambres de croissance sont mortes, les espèces qui en dépendaient ont disparu, les Anciens se sont dispersés et éteints ; les colosses se sont arrêtés là où ils étaient.
+- **Organes des colosses** : certains colosses anciens portent des organes vivants (équilibre, cœur organique, mémoire). La mémoire organique explique l'autonomie du Gardien ; l'organe d'équilibre manquant du Dormeur doit être recultivé dans la Matrice.
+- **Nombre de survivants** : cinq survivants naturels (Ilo, Maëlle, Sorrel, Nadja, Tam) et au plus deux humains nés de la Matrice (Ael, Iris).
+- **Structure de la carte** : un monde continu d'environ 2 400 tuiles de large : les Dunes Muettes, la Fonderie Engloutie (et les Conduites dessous), le Grand Réservoir, la Vallée des Colosses, la Serre-Matrice, l'Abîme, le Cœur. Trois verrous de progression : la vanne du lac, le Gardien, l'Abîme.
+- **Système de combat** : pas de combat direct pour l'humain. Les dangers sont physiques (chutes, noyade, Rôdeur des conduites, piétinement du Gardien). Affronter le Gardien consiste à grimper sur lui jusqu'à sa mémoire, puis à choisir de l'apaiser ou de le démanteler. Les colosses peuvent porter une arme (canon à vapeur) qui sert surtout à briser la roche.
+- **Multijoueur** : aucun.
+- **Direction graphique** : pixels nets agrandis, couleurs par région, silhouettes en parallaxe sur trois plans, brume atmosphérique, cycle jour et nuit, obscurité dans les intérieurs.
+- **Fin** : au Cœur, trois choix : le rallumer (la vie revient vite mais dépend de lui), le laisser dormir (la vie revient lentement par les mains des vivants), le libérer (il disperse ses graines et devient forêt). Un épilogue résume ce que le joueur a changé ; la partie peut continuer ensuite.
+- **Conséquences morales de la création de vie** : un humain créé choisit son nom et sa vie, peut refuser, et les survivants réagissent à sa naissance. Démanteler le Gardien rapporte beaucoup de ressources mais le détruit définitivement.
+
+## 15.3 Encore ouverts
+
+- Contenu narratif approfondi de chaque survivant, et davantage de survivants ou de régions.
+- Équilibrage fin des coûts et des durées (le colosse doit rester un projet de plusieurs heures).
+- Prise en charge de la manette.
 
 ---
 
@@ -578,3 +604,20 @@ Créer un jeu accessible d'exploration et de reconstruction dans un monde immens
 Les créations peuvent provenir de plans, de modifications ou d'une construction libre. Les plans offrent une légère économie de ressources. Les colosses sont trouvés et réparés, ou construits au cours de chantiers de plusieurs heures, module par module. Ils peuvent servir d'armes, de gardiens, de transports, de bases, de machines de construction ou de restaurateurs d'écosystèmes. Certains colosses antérieurs à la chute de la vie comportent des organes organiques.
 
 Le jeu doit préserver trois sensations : la petitesse initiale du joueur, la beauté monumentale du monde et l'immense satisfaction de rendre progressivement la vie à ce qui était mort.
+
+---
+
+# 17. État de l'implémentation
+
+Le jeu complet est jouable dans `dist/mecorys.html`. Les systèmes suivants existent :
+
+- **Monde** : génération déterministe, sept régions plus les Conduites, ruines décrites tuile par tuile, eau, lumière propagée depuis le ciel, cycle jour et nuit, météo par région (poussière, cendres, brume, gouttes, spores).
+- **Personnage** : humain personnalisable (peau, visage, coiffure, couleurs, silhouette, vêtements, accessoire), marche, course, saut, agrippage aux rebords, échelles et lianes, nage avec souffle, chutes dangereuses.
+- **Ressources et construction** : outil de démantèlement, réserves, mode construction avec aperçu vert ou rouge et raison lisible, réseaux d'énergie et d'eau visibles, lieux habitables fondés par un refuge.
+- **Robots** : éditeur à grille avec dix-sept modules, centre de gravité et appui affichés, énergie, poids, banc d'essai, plans trouvés (environ 5 % moins chers), plans personnels (le prototype coûte le prix normal, les copies profitent du plan), fabrication à l'établi, ordres précis (suivre, attendre, récolter, déblayer, arroser, chantier, livrer), pilotage d'une machine à siège, recherche de chemin.
+- **Survivants** : rencontres et dialogues, conditions exprimées clairement, décision autonome de s'installer dans un lieu, activités choisies selon leurs goûts et la priorité du lieu (qu'ils peuvent refuser), repas, humeur, départ s'ils sont malheureux, conversations entre eux.
+- **Écologie et vie** : zones d'humidité, mousse, herbe, arbres, insectes, oiseaux, brouteurs, Rôdeur ; chambres de croissance, Matrice, potagers, semis et lâchers, création d'espèces nouvelles par caractéristiques lisibles, naissance rare et narrative d'humains libres.
+- **Colosses** : grilles de modules parcourables dessus et dedans, jambes à échelles, Dormeur enfoui à diagnostiquer et réparer, Gardien autonome à affronter en grimpant, conception libre d'un colosse dans la cale, forge, pont roulant, installation module par module, activation spectaculaire, pilotage, fonctions (creuser, déployer un pont, canon, serre ambulante), transformations durables (canal rouvert, pont sur l'Abîme).
+- **Carte abstraite** : régions explorées, lieux, survivants, robots et colosses à l'échelle.
+- **Son** : ambiance de vent, d'eau et de gouttes, réverbération selon les lieux, musique générative par région, bruitages synthétisés.
+- **Histoire** : carnet, inscriptions, cinématiques (ouverture, vanne, Matrice, naissances, éveil du Dormeur, activation d'un colosse, pont, fin), épilogue, sauvegarde automatique.

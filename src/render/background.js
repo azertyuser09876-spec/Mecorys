@@ -250,48 +250,87 @@ function drawRibs(g, x, base, w, h, col) {
   g.lineCap = 'butt';
 }
 
-// Silhouette d'un colosse lointain, debout ou agenouillé.
+// Silhouette d'un colosse lointain : un géant voûté, mi-machine mi-créature, immobile depuis des siècles.
 function drawColossusSilhouette(g, x, base, h, col, kneel, rng) {
+  const s = h / 200;
+  g.save();
+  g.translate(x, base);
+  g.scale(s * (rng.chance(0.5) ? 1 : -1), s);
   g.fillStyle = css(col);
-  const w = h * 0.55;
-  const bodyY = base - h * (kneel ? 0.55 : 0.75);
+  const legY = kneel ? -40 : -70;
   // jambes
   g.beginPath();
   if (kneel) {
-    g.moveTo(x - w * 0.4, base);
-    g.lineTo(x - w * 0.3, base - h * 0.25);
-    g.lineTo(x + w * 0.1, base - h * 0.2);
-    g.lineTo(x + w * 0.25, base);
+    g.moveTo(-50, 0);
+    g.lineTo(-38, -36);
+    g.lineTo(10, -46);
+    g.lineTo(22, -30);
+    g.lineTo(-10, -20);
+    g.lineTo(-22, 0);
+    g.moveTo(30, 0);
+    g.lineTo(40, -44);
+    g.lineTo(58, -40);
+    g.lineTo(52, 0);
   } else {
-    g.moveTo(x - w * 0.35, base);
-    g.lineTo(x - w * 0.25, bodyY);
-    g.lineTo(x - w * 0.1, bodyY);
-    g.lineTo(x - w * 0.18, base);
-    g.moveTo(x + w * 0.18, base);
-    g.lineTo(x + w * 0.1, bodyY);
-    g.lineTo(x + w * 0.25, bodyY);
-    g.lineTo(x + w * 0.35, base);
+    g.moveTo(-40, 0);
+    g.lineTo(-30, -38);
+    g.lineTo(-38, -76);
+    g.lineTo(-14, -80);
+    g.lineTo(-8, -40);
+    g.lineTo(-18, 0);
+    g.moveTo(22, 0);
+    g.lineTo(30, -42);
+    g.lineTo(20, -82);
+    g.lineTo(44, -80);
+    g.lineTo(48, -38);
+    g.lineTo(42, 0);
   }
   g.fill();
-  // torse massif
+  // corps voûté, plaques dorsales
   g.beginPath();
-  g.moveTo(x - w * 0.4, bodyY + 6);
-  g.lineTo(x - w * 0.48, bodyY - h * 0.28);
-  g.lineTo(x - w * 0.2, bodyY - h * 0.38);
-  g.lineTo(x + w * 0.25, bodyY - h * 0.36);
-  g.lineTo(x + w * 0.45, bodyY - h * 0.22);
-  g.lineTo(x + w * 0.38, bodyY + 6);
+  g.moveTo(-62, legY + 10);
+  g.bezierCurveTo(-80, legY - 60, -30, legY - 120, 20, legY - 112);
+  g.bezierCurveTo(60, legY - 104, 82, legY - 60, 70, legY - 18);
+  g.lineTo(60, legY + 12);
+  g.closePath();
   g.fill();
-  // tête basse
-  g.fillRect(x + w * 0.05, bodyY - h * 0.45, w * 0.22, h * 0.1);
-  // bras pendants
-  g.fillRect(x - w * 0.56, bodyY - h * 0.25, w * 0.1, h * 0.42);
-  g.fillRect(x + w * 0.44, bodyY - h * 0.2, w * 0.1, h * 0.38);
-  // cheminées dorsales
-  g.fillRect(x - w * 0.15, bodyY - h * 0.48, 3, h * 0.12);
-  g.fillRect(x - w * 0.05, bodyY - h * 0.46, 2, h * 0.1);
-  g.fillStyle = css(scale(col, 1.1));
-  g.fillRect(x - w * 0.47, bodyY - h * 0.27, 2, h * 0.3);
+  for (let k = 0; k < 5; k++) {
+    const px = -50 + k * 22;
+    const py = legY - 92 + Math.abs(k - 2) * 12;
+    g.beginPath();
+    g.moveTo(px - 12, py + 14);
+    g.lineTo(px, py - 14 - (k === 2 ? 10 : 0));
+    g.lineTo(px + 12, py + 14);
+    g.fill();
+  }
+  // tête basse, tendue vers l'avant
+  g.beginPath();
+  g.moveTo(58, legY - 70);
+  g.lineTo(98, legY - 64);
+  g.lineTo(108, legY - 44);
+  g.lineTo(94, legY - 30);
+  g.lineTo(64, legY - 36);
+  g.closePath();
+  g.fill();
+  // bras qui touche le sol
+  g.beginPath();
+  g.moveTo(54, legY - 50);
+  g.quadraticCurveTo(86, legY - 10, 80, 0);
+  g.lineTo(96, 0);
+  g.quadraticCurveTo(100, legY - 16, 70, legY - 62);
+  g.closePath();
+  g.fill();
+  // cheminées
+  g.fillRect(-26, legY - 140, 7, 34);
+  g.fillRect(-12, legY - 132, 5, 26);
+  // lisière éclairée
+  g.strokeStyle = css(scale(col, 1.12));
+  g.lineWidth = 2 / s;
+  g.beginPath();
+  g.moveTo(-70, legY - 40);
+  g.bezierCurveTo(-60, legY - 95, -20, legY - 118, 20, legY - 112);
+  g.stroke();
+  g.restore();
 }
 
 function drawMegaBridge(g, x, w, y, col) {

@@ -144,6 +144,22 @@ export class Renderer {
       w.fillStyle = `rgba(30,40,90,${(night * 0.22).toFixed(3)})`;
       w.fillRect(0, 0, this.vw, this.vh);
     }
+    // halos colorés des sources de lumière, par-dessus l'obscurité
+    w.setTransform(z, 0, 0, z, -camX * z, -camY * z);
+    w.globalCompositeOperation = 'lighter';
+    const dark = 0.35 + 0.65 * Math.max(night, 1 - (world.lightAt(Math.floor((cam.x + cam.w / 2) / TILE), Math.floor((cam.y + cam.h / 2) / TILE)) / LIGHT_MAX));
+    for (const L of this.lastLights || []) {
+      const col = L.col || '255,180,110';
+      const a = Math.min(0.35, L.i * 0.22) * dark;
+      if (a < 0.01) continue;
+      const r = L.r * 0.8;
+      const gr = w.createRadialGradient(L.x, L.y, 0, L.x, L.y, r);
+      gr.addColorStop(0, `rgba(${col},${a.toFixed(3)})`);
+      gr.addColorStop(1, `rgba(${col},0)`);
+      w.fillStyle = gr;
+      w.fillRect(L.x - r, L.y - r, r * 2, r * 2);
+    }
+    w.setTransform(1, 0, 0, 1, 0, 0);
     w.globalCompositeOperation = 'source-over';
     g.drawImage(this.worldLayer, 0, 0);
 
@@ -211,6 +227,7 @@ export class Renderer {
     const data = this.lightImg.data;
     const dayK = 0.3 + 0.7 * sky.day;
     const lights = game.lights(view);
+    this.lastLights = lights;
     const buf = this._lbuf && this._lbuf.length === tw * th ? this._lbuf : (this._lbuf = new Float32Array(tw * th));
     for (let j = 0; j < th; j++) {
       const ty = ty0 + j;

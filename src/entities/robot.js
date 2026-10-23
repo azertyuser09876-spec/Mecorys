@@ -468,8 +468,8 @@ export class Robot {
       return [null, null];
     }
     this.msg = site.label || '';
-    const d = Math.hypot(site.x - this.cx, site.y - this.cy);
-    if (d < 40) {
+    const d = site.remote ? Math.abs(site.x - this.cx) + Math.max(0, Math.abs(site.y - (this.y + this.h)) - 40) : Math.hypot(site.x - this.cx, site.y - this.cy);
+    if (d < (site.remote ? 160 : 40)) {
       this.working = true;
       site.addWork(dt * (this.a.tools.has('soudure') ? 1 : 0.35) * (this.a.energyRatio || 1), this);
       if (Math.random() < dt * 4) game.particles.sparks(this.cx + this.facing * this.w / 2, this.cy);

@@ -431,7 +431,7 @@ export class Ecology {
         const x = b[k];
         const y = b[k + 1];
         if (y < CONDUITES.depth || x < CONDUITES.x0 || x > CONDUITES.x1) continue;
-        if (hash2(x, y, 88) > 0.07) continue;
+        if (hash2(x, y, 88) > 0.11) continue;
         fn(x * TILE + 8, (y + 1) * TILE, x + y);
       }
     });
@@ -440,9 +440,9 @@ export class Ecology {
   lights(out, view) {
     let n = 0;
     this.forGlow(view, (x, y) => {
-      if (n++ < 40) out.push({ x, y: y + 4, r: 42, i: 0.32 });
+      if (n++ < 40) out.push({ x, y: y + 6, r: 72, i: 0.55, col: '120,230,170' });
     });
-    for (const c of this.creatures) if (c.glow) out.push({ x: c.x, y: c.y - 4, r: 30, i: 0.3 });
+    for (const c of this.creatures) if (c.glow) out.push({ x: c.x, y: c.y - 4, r: 30, i: 0.3, col: '160,255,200' });
   }
 
   drawCreatures(g, view) {

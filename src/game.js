@@ -20,6 +20,7 @@ import { Life } from './systems/life.js';
 import { openJournal } from './ui/journal.js';
 import { Story } from './story/story.js';
 import { ColossusSystem } from './systems/colossi.js';
+import { openMap, markExplored } from './ui/map.js';
 import { STRUCT } from './data/structures.js';
 import { RESOURCES, SAMPLES, costText } from './data/items.js';
 import { LORE, JOURNAL, REGION_SUB } from './data/texts.js';
@@ -479,7 +480,7 @@ export class Game {
 
     // Région
     const region = this.region();
-    if (region.id !== this.regionId) {
+    if (region.id !== this.regionId && !this.titleMode) {
       const first = !this.flags['vu_' + region.id];
       this.regionId = region.id;
       if (first) {
@@ -490,6 +491,11 @@ export class Game {
       for (const sys of this.systems) sys.onRegion && sys.onRegion(region, first);
     }
 
+    this.exploreT = (this.exploreT || 0) - dt;
+    if (this.exploreT <= 0) {
+      this.exploreT = 0.5;
+      markExplored(this);
+    }
     // Caméra et météo
     const prevX = this.camera.x;
     const prevY = this.camera.y;
@@ -506,6 +512,7 @@ export class Game {
     const input = this.input;
     if (input.hit('build')) this.building.toggle();
     if (input.hit('journal')) openJournal(this);
+    if (input.hit('map')) openMap(this);
     if (input.hit('lantern')) {
       this.player.lantern = !this.player.lantern;
       this.audio && this.audio.sfx('click');
@@ -581,8 +588,8 @@ export class Game {
   lights(view) {
     const out = [];
     const p = this.player;
-    out.push({ x: p.cx, y: p.cy - 4, r: 40, i: 0.22 });
-    if (p.lantern) out.push({ x: p.cx + p.facing * 4, y: p.cy - 4, r: 120, i: 0.85 });
+    out.push({ x: p.cx, y: p.cy - 4, r: 56, i: 0.3, col: '0,0,0' });
+    if (p.lantern) out.push({ x: p.cx + p.facing * 4, y: p.cy - 4, r: 120, i: 0.85, col: '255,200,120' });
     for (const s of this.structures) {
       if (!this.inView(s, view)) continue;
       const L = s.light && s.light();

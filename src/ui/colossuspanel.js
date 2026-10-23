@@ -77,6 +77,17 @@ export function openColossus(game, c) {
         if (!a.issues.length) iss.append(el('div', { class: 'ok' }, '✓ Tout fonctionne.'));
         for (const i of a.issues) iss.append(el('div', { class: i.level === 'erreur' ? 'ko' : 'warn' }, (i.level === 'erreur' ? '✗ ' : '! ') + i.text));
         side.append(iss);
+        const todo = c.cells.filter((q) => q.state === 'livre' || q.state === 'endommage' || (q.state === 'manquant' && (CMODULES[q.m].grown || CMODULES[q.m].ancient) && game.inv.items[q.m] > 0) || (q.state === 'plan' && (CMODULES[q.m].grown || CMODULES[q.m].ancient) && game.inv.items[q.m] > 0));
+        if (todo.length) {
+          side.append(el('h3', {}, 'Travaux'));
+          for (const q of todo) {
+            const M = CMODULES[q.m];
+            const w = c.work[q.x + ',' + q.y] || 0;
+            const label = q.state === 'endommage' ? `Réparer : ${M.name}` + (c.paid[q.x + ',' + q.y] ? '' : ` (${costText(sys.repairCost(q))})`) : q.state === 'livre' ? `Installer : ${M.name} (${Math.round((w / (M.work || 30)) * 100)} %)` : `Greffer : ${M.name}`;
+            side.append(el('button', { class: 'btn small', onclick: () => (game.ui.closePanel(), sys.cellInteract(c, q)) }, label));
+          }
+          side.append(el('p', { class: 'muted small' }, 'Il faut rester près du module (ou sur le chantier de la cale) pendant le travail.'));
+        }
         if (c.type === 'construit' && !c.active) {
           const left = c.cells.filter((q) => q.state !== 'ok');
           side.append(el('h3', {}, 'Chantier'), el('p', { class: 'small' }, `${c.cells.length - left.length} modules installés sur ${c.cells.length}. Le plan complet ${plan.ok ? 'fonctionnera' : 'a encore des défauts'}.`));

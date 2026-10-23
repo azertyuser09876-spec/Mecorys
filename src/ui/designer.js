@@ -205,6 +205,7 @@ export function openDesigner(game, etabli) {
         const test = el('button', { class: 'btn', disabled: !state.cells.length, onclick: () => (state.test = { t: 0, a }) }, 'Essayer');
         btns.append(fab, save, test);
         side.append(btns);
+        side.append(el('div', { class: 'd-btns' }, el('button', { class: 'btn small', disabled: q.length >= 3 || !game.inv.has({ ferraille: 5 }), title: 'Les rouages sont rares dans les ruines. Ici, on peut en usiner, lentement.', onclick: () => (R.machineGear(etabli), refresh()) }, 'Usiner un rouage (5 ferraille)')));
         if (q.length) {
           side.append(el('h3', {}, 'Fabrication en cours'));
           for (const job of q) side.append(el('div', {}, job.name, el('div', { class: 'meter' }, el('div', { style: { width: Math.round((job.progress / job.total) * 100) + '%' } }))));

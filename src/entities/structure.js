@@ -81,7 +81,7 @@ export class Structure {
     if (!L || this.ruined) return null;
     if ((this.type === 'chambre' || this.type === 'forge') && !this.active) return null;
     if (this.type === 'matrice' && !(this.data.life > 0)) return null;
-    return { x: this.x + L.dx * TILE, y: this.y + L.dy * TILE, r: L.r, i: L.i };
+    return { x: this.x + L.dx * TILE, y: this.y + L.dy * TILE, r: L.r, i: L.i, col: L.col === 'organic' ? '255,150,160' : undefined };
   }
 
   toJSON() {

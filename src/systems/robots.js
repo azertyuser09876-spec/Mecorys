@@ -83,6 +83,15 @@ export class Robots {
     return (this.queues[etabli.id] = this.queues[etabli.id] || []);
   }
 
+  // Usiner un rouage : lent et coûteux en ferraille, mais jamais bloquant.
+  machineGear(etabli) {
+    const game = this.game;
+    const cost = { ferraille: 5 };
+    if (!game.inv.pay(cost)) return game.toast('Il faut 5 ferraille pour usiner un rouage.', 'bad');
+    this.queueOf(etabli).push({ kind: 'rouage', name: 'Rouage', progress: 0, total: 12 });
+    game.audio && game.audio.sfx('build');
+  }
+
   fabricate(etabli, state, cost) {
     const game = this.game;
     const a = analyze(state.cells);
@@ -111,6 +120,13 @@ export class Robots {
       const bonus = game.survivors ? game.survivors.bonus('robots') : 1;
       job.progress += dt * e * bonus;
       if (Math.random() < dt * 3) game.particles.sparks(s.x + s.w * 0.7, s.y + 6, 2);
+      if (job.progress >= job.total && job.kind === 'rouage') {
+        q.shift();
+        game.inv.add('rouages', 1);
+        game.toast('Un rouage usiné à l’établi.', 'good');
+        game.ui.refreshPanel();
+        continue;
+      }
       if (job.progress >= job.total) {
         q.shift();
         const r = new Robot({ id: job.source, name: job.name, cells: job.cells }, s.cx + 20, s.y + s.h);

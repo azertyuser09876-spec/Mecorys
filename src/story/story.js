@@ -12,6 +12,74 @@ export class Story {
     game.cine = this.cine;
     this.timer = 0;
     this.saveT = 60;
+    this.tipT = 0;
+  }
+
+  // --- Ouverture -------------------------------------------------------------------
+  async intro() {
+    const g = this.game;
+    const p = g.player;
+    g.ui.fade(1, 0.01);
+    await this.cine.run(async (c) => {
+      await c.wait(1);
+      await c.caption('Le puits s’est tu.', 3.2);
+      await c.caption('Les autres sont partis vers le nord, avec ce qui restait d’eau.', 3.8);
+      await c.caption('Toi, tu pars vers l’est. Là-bas, les tours touchent encore le ciel.', 4.2);
+      c.zoom(3);
+      g.camera.zoom = g.camera.targetZoom;
+      g.camera.focus = { x: p.cx + 400, y: p.cy - 120, speed: 0.6 };
+      g.camera.follow(p.cx + 400, p.cy - 120, 1, g.bounds(), 0, true);
+      g.ui.fade(0, 3);
+      await c.wait(1.5);
+      c.focus(p.cx + 3600, p.cy - 160, 0.35);
+      await c.caption('Mecorys', 5, true);
+      await c.wait(2.5);
+      c.focus(p.cx, p.cy, 0.9);
+      c.zoom(0);
+      await c.wait(2.2);
+      c.release();
+    });
+    g.ui.fade(0, 0.5);
+    g.note('depart');
+  }
+
+  tips() {
+    const g = this.game;
+    const k = (a) => `<kbd>${g.input.label(a)}</kbd>`;
+    const ab = g.structures.find((s) => s.type === 'refuge' && s.data.poi === 'abri');
+    const et = g.structures.find((s) => s.type === 'etabli');
+    return [
+      { id: 'move', when: () => true, text: `${k('left')}${k('right')} marcher · ${k('jump')} sauter · ${k('run')} courir · ${k('up')} grimper`, done: () => g.player.cx > 62 * TILE, max: 40 },
+      { id: 'tool', when: () => g.player.cx > 66 * TILE, text: 'Maintiens le <b>clic gauche</b> sur la ferraille rouillée pour la démanteler.', done: () => g.inv.res.ferraille >= 4, max: 60 },
+      { id: 'fibre', when: () => g.inv.res.ferraille >= 4 && ab && ab.ruined, text: 'Le bois mort et les lianes donnent de la fibre. Les gravats donnent de la pierre.', done: () => g.inv.res.fibre >= 4, max: 50 },
+      { id: 'abri', when: () => g.journal.some((j) => j.id === 'abri_vu'), text: `Approche-toi du foyer de l’abri et appuie sur ${k('interact')} pour le remettre en état.`, done: () => ab && !ab.ruined, max: 90 },
+      { id: 'keys', when: () => ab && !ab.ruined, text: `${k('build')} construire · ${k('journal')} carnet · ${k('map')} carte · ${k('lantern')} lanterne · molette : zoom`, done: () => false, max: 22 },
+      { id: 'etabli', when: () => et && !et.ruined, text: `À l’établi, ${k('interact')} pour concevoir et fabriquer un robot.`, done: () => g.robots.built > 0, max: 60 },
+      { id: 'lantern', when: () => !g.player.lantern && g.world.lightAt(Math.floor(g.player.cx / TILE), Math.floor(g.player.cy / TILE)) < 3, text: `Il fait noir ici : ${k('lantern')} pour allumer la lanterne.`, done: () => g.player.lantern, max: 30 },
+      { id: 'orders', when: () => g.robots.built > 0, text: `${k('orders')} : ordres aux robots. Un dépôt (${k('build')}) près des épaves leur évite de longs trajets.`, done: () => false, max: 25 },
+    ];
+  }
+
+  updateTips(dt) {
+    const g = this.game;
+    if (this.cine.active || g.building.active || g.ui.panel || g.titleMode) return;
+    const list = this.tips();
+    const tip = list.find((t) => !g.flags['tip_' + t.id] && t.when());
+    if (!tip) {
+      g.ui.setHint('');
+      return;
+    }
+    if (this.tipId !== tip.id) {
+      this.tipId = tip.id;
+      this.tipT = 0;
+    }
+    this.tipT += dt;
+    if (tip.done() || this.tipT > tip.max) {
+      g.flags['tip_' + tip.id] = true;
+      g.ui.setHint('');
+      return;
+    }
+    g.ui.setHint(tip.text);
   }
 
   poi(type) {
@@ -21,6 +89,7 @@ export class Story {
   update(dt) {
     const g = this.game;
     this.cine.update(dt);
+    this.updateTips(dt);
     this.timer -= dt;
     if (this.timer > 0) return;
     this.timer = 0.5;

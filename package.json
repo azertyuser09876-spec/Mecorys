@@ -5,10 +5,10 @@
   "description": "Jeu d'exploration et de reconstruction dans un monde immense, silencieux et presque privé de vie.",
   "type": "module",
   "scripts": {
-    "dev": "esbuild src/main.js --bundle --format=esm --outfile=www/mecorys.js --servedir=www --watch",
+    "dev": "esbuild src/main.js --bundle --format=iife --outfile=www/mecorys.js --servedir=www --serve=8000 --watch",
     "build": "node tools/build.mjs",
     "test": "node --test tests/*.test.js",
-    "smoke": "node tools/smoke.mjs"
+    "smoke": "node tools/shot.mjs smoke \"skip&hour=10\" 2000"
   },
   "devDependencies": {
     "esbuild": "0.25.12"

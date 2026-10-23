@@ -203,7 +203,8 @@ export class ColossusSystem {
 
   startWork(c, cell) {
     this.working = { colossus: c, cell };
-    this.game.toast('Tu travailles au module. Reste à côté ; des robots soudeurs peuvent aider (ordre « Chantier »).');
+    const remote = c.type === 'construit' && !c.active;
+    this.game.toast(remote ? 'Tu travailles au module depuis les échafaudages de la cale. Reste sur le chantier ; des robots soudeurs peuvent aider.' : 'Tu travailles au module. Reste à côté ; des robots soudeurs peuvent aider (ordre « Chantier »).');
   }
 
   // --- Travaux : le joueur et les robots ajoutent du travail ---------------------------
@@ -219,7 +220,9 @@ export class ColossusSystem {
           const key = cell.x + ',' + cell.y;
           if (cell.state === 'livre' || (cell.state === 'endommage' && c.paid[key])) {
             const r = c.cellRect(cell);
-            g.sites.push({ x: r.x + r.w / 2, y: r.y + r.h - 20, label: CMODULES[cell.m].name, addWork: (k) => this.addWork(c, cell, k), done: false });
+            // dans la cale, on travaille depuis le sol du chantier, sur les échafaudages
+            const remote = c.type === 'construit' && !c.active;
+            g.sites.push({ x: r.x + r.w / 2, y: remote ? (CALE.floor - 1) * TILE : r.y + r.h - 20, remote, label: CMODULES[cell.m].name, addWork: (k) => this.addWork(c, cell, k), done: false });
           }
         }
       // les gravats de la cale sont aussi un chantier
@@ -228,7 +231,8 @@ export class ColossusSystem {
       const { colossus: c, cell } = this.working;
       const r = c.cellRect(cell);
       const p = g.player;
-      const near = Math.abs(p.cx - (r.x + r.w / 2)) < r.w * 0.8 && Math.abs(p.cy - (r.y + r.h / 2)) < r.h;
+      const remote = c.type === 'construit' && !c.active;
+      const near = remote ? Math.abs(p.cx - (r.x + r.w / 2)) < 30 * TILE && p.cx / TILE > CALE.x0 - 30 && p.cx / TILE < CALE.x1 + 40 : Math.abs(p.cx - (r.x + r.w / 2)) < r.w * 0.8 && Math.abs(p.cy - (r.y + r.h / 2)) < r.h;
       if (!near) this.working = null;
       else {
         p.using = true;
@@ -423,17 +427,33 @@ export class ColossusSystem {
       k.sfx('heartbeat');
       await k.caption('Sous le sable, quelque chose prend une longue inspiration.', 3.5);
       k.sfx('rumble');
-      // le sable s'écoule de ses épaules : un cratère restera
-      const tx0 = Math.floor(c.ox / TILE) - 3;
-      const ty0 = Math.floor(c.oy / TILE) - 14;
-      const tx1 = tx0 + c.gw + 6;
-      const ty1 = Math.floor((c.oy + c.h) / TILE);
-      for (let y = ty0; y <= ty1; y += 2) {
-        w.setArea(tx0, y, tx1, y + 1, T.AIR, (id) => id === T.SAND || id === T.ROCK || id === T.RUBBLE);
+      // le sable s'écoule de ses épaules : un cratère en pente douce restera
+      const tx0 = Math.floor(c.ox / TILE) - 2;
+      const tx1 = Math.floor((c.ox + c.w) / TILE) + 2;
+      const floor = Math.floor((c.oy + c.h) / TILE); // le fond du cratère, sous ses pieds
+      const loose = (id) => id === T.SAND || id === T.ROCK || id === T.RUBBLE || id === T.SOIL;
+      for (let y = Math.floor(c.oy / TILE) - 16; y < floor; y += 2) {
+        w.setArea(tx0, y, tx1, Math.min(floor - 1, y + 1), T.AIR, loose);
         k.shake(3);
         for (let i = 0; i < 4; i++) g.particles.dust(tx0 * TILE + Math.random() * (tx1 - tx0) * TILE, y * TILE, 0, 4);
-        await k.wait(0.12);
+        await k.wait(0.1);
       }
+      // rampes de part et d'autre : une case de montée pour deux de distance
+      for (let d = 1; d < 90; d++) {
+        let any = false;
+        for (const x of [tx0 - d, tx1 + d]) {
+          const fy = floor - Math.ceil(d / 2);
+          const top = w.surface(x);
+          if (top >= fy) continue;
+          any = true;
+          w.setArea(x, top - 2, x, fy - 1, T.AIR, loose);
+        }
+        if (!any) break;
+        if (d % 6 === 0) await k.wait(0.03);
+      }
+      // le cratère s'ouvre sur le ciel : plus de paroi rocheuse derrière
+      for (let x = tx0 - 90; x <= tx1 + 90; x++) for (let y = 40; y < floor; y++) if (w.get(x, y) === T.AIR) w.rawBg(x, y, 0);
+      w.markAreaDirty(tx0 - 90, 40, tx1 + 90, floor);
       c.buried = false;
       c.active = true;
       c.build();
@@ -616,7 +636,7 @@ export class ColossusSystem {
       k.zoom(0);
       k.release();
     });
-    if (a <= CHASM.x0 + 4 && b >= CHASM.x1 - 4) {
+    if (a <= CHASM.x0 + 14 && b >= CHASM.x1 - 14) {
       g.setFlag('pont');
       g.note('pont');
     }
@@ -650,6 +670,7 @@ export class ColossusSystem {
       }
       for (let i = 0; i < p.tops.length; i++) {
         const x = p.x0 + i;
+        for (let y = p.tops[i] - 2; y <= p.tops[i] + 2; y++) g.world.rawBg(x, y, 0);
         g.world.setArea(x, p.tops[i] + 1, x, p.tops[i] + 2, T.WATER, (id) => id === T.AIR);
         if (i % 6 === 0) await k.wait(0.04);
       }

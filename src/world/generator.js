@@ -590,26 +590,29 @@ export function generateWorld(seed = 1729) {
     poi('sample', bx + 10, surf(bx + 10), { id: 'tissu_brouteur' });
     poi('lore', bx - 2, surf(bx), { id: 'squelette' });
 
-    // La cale du chantier : bassin creusé, encombré de gravats
+    // La cale du chantier : bassin creusé, encombré de gravats, avec une rampe de sortie à l'est
     const { x0, x1, floor } = CALE;
+    const rampStart = x0 + 72;
+    const floorAt = (x) => (x < rampStart ? floor : Math.max(128, floor - Math.floor((x - rampStart) / 3)));
     for (let x = x0 - 2; x <= x1 + 2; x++) {
-      for (let y = 128; y <= floor; y++) {
+      const fx = floorAt(x);
+      for (let y = 128; y <= fx; y++) {
         world.raw(x, y, T.AIR);
         world.rawBg(x, y, BG.CONCRETE);
       }
-      world.raw(x, floor + 1, T.CONCRETE);
-      world.raw(x, floor + 2, T.CONCRETE);
-      ground[x] = floor + 1;
+      world.raw(x, fx + 1, T.CONCRETE);
+      world.raw(x, fx + 2, T.CONCRETE);
+      for (let y = fx + 3; y <= floor + 2; y++) world.raw(x, y, T.CONCRETE);
+      ground[x] = fx + 1;
     }
     G.fill(x0 - 4, 128, x0 - 3, floor + 2, T.CONCRETE);
-    G.fill(x1 + 3, 128, x1 + 4, floor + 2, T.CONCRETE);
     G.vline(x0 - 2, 127, floor, T.LADDER);
-    G.vline(x1 + 2, 127, floor, T.LADDER);
     // gravats à dégager
     for (let x = x0; x <= x1; x++) {
       const t = (x - x0) / (x1 - x0);
-      const hh = Math.round(Math.sin(t * Math.PI) * 11 + 2 + hash1(x, 51) * 2);
-      for (let k = 0; k < hh; k++) world.raw(x, floor - k, hash2(x, k, 52) > 0.84 ? T.SCRAP : T.RUBBLE);
+      const fx = floorAt(x);
+      const hh = Math.min(fx - 128, Math.round(Math.sin(t * Math.PI) * 11 + 2 + hash1(x, 51) * 2));
+      for (let k = 0; k < hh; k++) world.raw(x, fx - k, hash2(x, k, 52) > 0.84 ? T.SCRAP : T.RUBBLE);
     }
     // tours d'échafaudage et pont roulant
     for (const tx of [x0 - 9, x1 + 6]) {
@@ -625,6 +628,11 @@ export function generateWorld(seed = 1729) {
     G.set(x0 - 8, 94, T.LADDER);
     G.set(x1 + 7, 95, T.LADDER);
     G.set(x1 + 7, 94, T.LADDER);
+    // la rampe débouche sur la vallée : la tour est n'a pas de pied au sol
+    for (let y = 120; y < 128; y++) {
+      world.raw(x1 + 6, y, T.AIR);
+      world.raw(x1 + 8, y, T.AIR);
+    }
     // Bureau du chantier
     const ox0 = x1 + 12;
     const ox1 = x1 + 30;

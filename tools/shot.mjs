@@ -25,7 +25,7 @@ page.on('pageerror', (e) => errors.push(e.message + '\n' + e.stack));
 page.on('console', (m) => {
   if (m.type() === 'error' || m.type() === 'warning' || process.env.LOG) console.log('[console]', m.type(), m.text());
 });
-await page.goto('file://' + root + '/www/index.html?' + query);
+await page.goto("file://" + root + "/www/index.html?" + (query.includes("x=") || query.includes("skip") || query.includes("title") ? query : query + "&skip"));
 await page.waitForTimeout(Number(wait));
 if (script) {
   const code = existsSync(script) ? readFileSync(script, 'utf8') : script;

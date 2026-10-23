@@ -674,3 +674,103 @@ button.btn.small {
   gap: 4px;
   margin-top: 8px;
 }
+
+/* --- Titre et création --- */
+.title {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 8vw;
+  background: linear-gradient(90deg, rgba(10, 9, 8, 0.75), rgba(10, 9, 8, 0.1) 60%);
+  pointer-events: auto;
+  animation: fadein 2.5s ease;
+}
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.title-card h1 {
+  font-size: clamp(54px, 9vw, 124px);
+  font-weight: normal;
+  letter-spacing: 0.18em;
+  margin: 0;
+  font-variant: small-caps;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+.title-sub {
+  font-style: italic;
+  color: var(--ink-dim);
+  font-size: clamp(16px, 1.8vw, 22px);
+  margin: 6px 0 34px 4px;
+}
+.title-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(320px, 70vw);
+}
+button.btn.big {
+  font-size: 19px;
+  padding: 11px 18px;
+  text-align: left;
+}
+.title-foot {
+  margin-top: 40px;
+  max-width: 420px;
+}
+.creation {
+  align-items: center;
+  margin: 10px 0;
+}
+.creation-preview {
+  width: 160px;
+  height: 200px;
+  border: 1px solid var(--panel-edge);
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+.creation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.c-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.c-row > .muted:first-child {
+  width: 130px;
+  font-size: 14px;
+}
+.c-val {
+  min-width: 140px;
+  text-align: center;
+  font-size: 14px;
+}
+.swatch {
+  display: inline-block;
+  width: 140px;
+  height: 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.c-row input[type='range'] {
+  flex: 1;
+}
+.goal {
+  border-color: var(--accent);
+  margin-bottom: 10px;
+}
+.map {
+  display: block;
+  max-width: 100%;
+  cursor: grab;
+  border: 1px solid rgba(214, 190, 150, 0.15);
+}
+.help p {
+  margin: 8px 0;
+}
