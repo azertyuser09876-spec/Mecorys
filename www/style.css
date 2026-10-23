@@ -521,3 +521,156 @@ button.btn.small {
   color: var(--ink-dim);
   margin-top: 2px;
 }
+
+/* --- Éditeur de robots --- */
+.d-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.d-name,
+.r-name {
+  font-family: var(--font);
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-edge);
+  color: var(--ink);
+  padding: 4px 8px;
+  border-radius: 3px;
+  width: 200px;
+}
+.r-name {
+  width: 150px;
+  font-size: 15px;
+}
+.d-select {
+  font-family: var(--font);
+  font-size: 14px;
+  background: #2a2622;
+  color: var(--ink);
+  border: 1px solid var(--panel-edge);
+  padding: 4px;
+  border-radius: 3px;
+}
+.d-plans {
+  display: flex;
+  gap: 6px;
+}
+.d-main {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.d-palette {
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 62vh;
+  overflow: auto;
+}
+.d-cat {
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+}
+.d-mod {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 14px;
+  padding: 2px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+  text-align: left;
+}
+.d-mod.on {
+  border-color: var(--accent);
+  background: rgba(216, 163, 92, 0.15);
+}
+.d-mod.locked {
+  opacity: 0.35;
+  cursor: default;
+}
+.d-center {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.d-grid {
+  border: 1px solid var(--panel-edge);
+  cursor: crosshair;
+  max-width: 100%;
+}
+.d-test {
+  border: 1px solid rgba(214, 190, 150, 0.15);
+  width: 300px;
+  height: 90px;
+  image-rendering: pixelated;
+}
+.d-help {
+  font-size: 12px;
+}
+.d-side {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.d-side h3 {
+  margin: 10px 0 4px;
+  font-weight: normal;
+  font-size: 16px;
+  font-variant: small-caps;
+  color: var(--accent);
+}
+.d-side h3:first-child {
+  margin-top: 0;
+}
+.d-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  border-bottom: 1px dotted rgba(214, 190, 150, 0.12);
+  padding: 2px 0;
+}
+.d-issues {
+  margin-top: 8px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.warn {
+  color: #e0c070;
+}
+.small {
+  font-size: 12px;
+}
+.d-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.r-card {
+  margin-bottom: 8px;
+}
+.r-card.focus {
+  border-color: var(--accent);
+}
+.r-orders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}

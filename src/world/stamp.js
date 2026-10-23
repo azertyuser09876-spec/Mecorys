@@ -27,6 +27,7 @@ export const LEGEND = {
   s: T.SOIL,
   Z: T.BEDROCK,
   o: T.MOSSROCK,
+  t: T.TRUSS,
 };
 
 export class Gen {

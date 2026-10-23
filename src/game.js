@@ -14,6 +14,7 @@ import { Inventory } from './systems/inventory.js';
 import { Lieux } from './systems/lieux.js';
 import { Building } from './systems/building.js';
 import { Ecology } from './systems/ecology.js';
+import { Robots } from './systems/robots.js';
 import { STRUCT } from './data/structures.js';
 import { RESOURCES, SAMPLES, costText } from './data/items.js';
 import { LORE, JOURNAL, REGION_SUB } from './data/texts.js';
@@ -44,6 +45,7 @@ export class Game {
     this.building = new Building(this);
     this.ecology = new Ecology(this);
     this.systems = []; // systèmes additionnels : update(dt), draw...(g)
+    this.robots = this.addSystem(new Robots(this));
     this.paused = false;
     this.debug = false;
     this.fps = 60;

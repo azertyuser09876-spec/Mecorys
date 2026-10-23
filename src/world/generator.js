@@ -130,13 +130,14 @@ export function generateWorld(seed = 1729) {
   poi('prop', 47, 118, { kind: 'campfire' });
   G.fill(49, 112, 51, 117, T.AIR);
   G.fillBg(49, 112, 51, 117, BG.NONE);
-  G.fillBg(49, 118, 51, 124, BG.SAND);
-  G.fill(49, 118, 51, 124, T.AIR);
+  G.fillBg(49, 118, 51, 120, BG.SAND);
+  G.fill(49, 118, 51, 120, T.AIR);
   G.set(48, 117, T.BRICK);
   G.set(52, 117, T.BRICK);
   G.set(48, 118, T.BRICK);
   G.set(52, 118, T.BRICK);
-  G.fill(48, 125, 52, 125, T.ROCK);
+  G.fill(48, 121, 52, 121, T.ROCK);
+  G.hline(49, 51, 118, T.PLANK);
   poi('prop', 50, 118, { kind: 'well' });
   poi('lore', 41, 118, { id: 'camp' });
 
@@ -173,14 +174,15 @@ export function generateWorld(seed = 1729) {
     // sable entré par la porte et dune sur le toit
     G.set(x0 + 1, g - 1, T.SAND);
     G.set(x0 + 2, g - 1, T.SAND);
-    for (let x = x0 + 10; x <= x1 + 8; x++) {
-      const hh = Math.round(clamp((x - (x0 + 10)) / 3, 0, 3) - clamp((x - x1) / 2.5, 0, 4));
+    // dune sur le toit, puis talus de sable contre le mur est
+    for (let x = x0 + 11; x <= x1; x++) {
+      const hh = Math.min(3, Math.floor((x - (x0 + 11)) / 3) + 1);
       for (let k = 0; k < hh; k++) if (world.get(x, g - 8 - k) === T.AIR) world.raw(x, g - 8 - k, T.SAND);
     }
-    for (let x = x1 + 1; x <= x1 + 10; x++) {
-      const top = g - 8 + Math.round((x - x1) * 0.8);
-      for (let y = top; y <= g; y++) world.raw(x, y, T.SAND);
-    }
+    // porte est, et une congère au pied du mur
+    G.fill(x1, g - 3, x1, g - 1, T.AIR);
+    for (let x = x1 + 3; x <= x1 + 7; x++) world.raw(x, g - 1, T.SAND);
+    world.raw(x1 + 5, g - 2, T.SAND);
     poi('refuge', x0 + 6, g, { id: 'abri', found: true, ruined: true });
     poi('lore', x0 + 14, g, { id: 'abri' });
     poi('cache', x1 - 3, g - 4, { items: { ferraille: 3, fibre: 2 } });
@@ -206,13 +208,24 @@ export function generateWorld(seed = 1729) {
         }
       }
     // côtes de métal
-    for (let k = -2; k <= 2; k++) G.vline(cx + k * 5, cy - ry + 2, cy + 3, T.GIRDER);
-    G.fill(cx - 11, cy + 4, cx + 11, cy + ry, T.SAND);
-    G.fill(cx - rx - 1, cy - 2, cx - rx + 2, cy + 2, T.AIR); // brèche
-    G.fillBg(cx - rx - 1, cy - 2, cx - rx + 2, cy + 2, BG.METAL);
+    for (let k = -2; k <= 2; k++) G.vline(cx + k * 5, cy - ry + 2, cy + 3, T.TRUSS);
+    // couloir traversant au niveau du sol : on passe à travers l'épave
+    const gA = surf(cx - rx - 3);
+    const gB = surf(cx + rx + 3);
+    const gl = Math.round((gA + gB) / 2);
+    for (let x = cx - rx - 2; x <= cx + rx + 2; x++) {
+      const gx = Math.round(gA + ((gB - gA) * (x - (cx - rx - 3))) / (2 * rx + 6));
+      for (let y = gx - 3; y <= gx - 1; y++) {
+        world.raw(x, y, T.AIR);
+        world.rawBg(x, y, BG.METAL);
+      }
+      for (let y = gx; y <= cy + ry + 1; y++) if (world.get(x, y) === T.AIR || y === gx) world.raw(x, y, T.SAND);
+      ground[x] = gx;
+      if ((x - cx) % 5 === 0) world.raw(x, gx - 1, T.AIR);
+    }
     G.hline(cx - 9, cx + 9, cy - 3, T.PLATFORM);
-    poi('cache', cx + 4, cy + 4, { items: { rouages: 2, ferraille: 4 } });
-    poi('lore', cx - 3, cy + 4, { id: 'carcasse' });
+    poi('cache', cx + 4, cy - 3, { items: { rouages: 2, ferraille: 4 } });
+    poi('lore', cx - 3, gl, { id: 'carcasse' });
   }
 
   // Tours en ruine
@@ -233,16 +246,17 @@ export function generateWorld(seed = 1729) {
       }
     }
     // planchers et échelle
-    for (let y = g - 8; y > top + 3; y -= 8) G.hline(x + 1, x + w - 2, y, T.PLATFORM);
     G.vline(x + w - 2, top + 3, g - 1, T.LADDER);
+    for (let y = g - 8; y > top + 3; y -= 8) G.hline(x + 1, x + w - 2, y, T.PLATFORM);
     // fenêtres
     for (let y = g - 5; y > top + 4; y -= 8) {
       G.set(x, y, T.AIR);
       G.set(x, y - 1, T.AIR);
       G.set(x + w - 1, y - 3, T.AIR);
     }
-    // porte
+    // portes des deux côtés
     G.fill(x, g - 3, x, g - 1, T.AIR);
+    G.fill(x + w - 1, g - 3, x + w - 1, g - 1, T.AIR);
     G.hline(x, x + w - 1, g, T.CONCRETE);
     for (let i = 1; i < w - 1; i++) world.rawBg(x + i, g, BG.CONCRETE);
     for (let i = 0; i < w; i++) for (let y = g + 1; y <= surf(x + i); y++) if (world.get(x + i, y) === T.AIR) world.raw(x + i, y, T.SAND);
@@ -296,13 +310,15 @@ export function generateWorld(seed = 1729) {
     G.vline(x0 + 46, top + 1, top + 5, T.CHAIN);
     for (let x = x0 + 4; x < x1 - 2; x += 7) G.vline(x, top + 1, top + 2 + Math.floor(hash1(x, 3) * 6), T.VINE);
     // machines
-    G.fill(x0 + 18, FG - 3, x0 + 21, FG - 1, T.GEARBOX);
-    G.fill(x0 + 8, FG - 14, x0 + 10, FG - 12, T.SCRAP);
+    G.fill(x0 + 18, FG - 2, x0 + 21, FG - 1, T.GEARBOX);
+    G.fill(x0 + 19, FG - 3, x0 + 20, FG - 3, T.GEARBOX);
+    G.fill(x0 + 8, FG - 13, x0 + 10, FG - 12, T.SCRAP);
     G.fill(x1 - 8, FG - 2, x1 - 5, FG - 1, T.SCRAP);
     // puits vers les conduites
     G.fill(x1 - 3, FG, x1 - 2, CONDUITES.depth + 35, T.AIR);
     G.fillBg(x1 - 3, FG, x1 - 2, CONDUITES.depth + 35, BG.PIPES);
-    G.vline(x1 - 3, FG - 1, CONDUITES.depth + 35, T.LADDER);
+    G.vline(x1 - 3, FG + 1, CONDUITES.depth + 35, T.LADDER);
+    G.hline(x1 - 3, x1 - 2, FG, T.GRATE);
     poi('etabli', x0 + 10, FG, { found: true });
     poi('plan', x0 + 6, FG - 11, { id: 'trotteur' });
     poi('plan', x1 - 4, FG - 11, { id: 'chaudiere' });
@@ -324,6 +340,7 @@ export function generateWorld(seed = 1729) {
       }
     G.vline(x + 2, top, FG - 1, T.LADDER);
     G.fill(x, FG - 3, x, FG - 1, T.AIR);
+    G.fill(x + w - 1, FG - 3, x + w - 1, FG - 1, T.AIR);
     G.hline(x - 1, x + w, top, T.BRICK);
     G.set(x + 2, top, T.AIR);
     G.set(x + 1, top, T.AIR);
@@ -351,9 +368,10 @@ export function generateWorld(seed = 1729) {
     G.fill(x0 + 30, top, x0 + 42, top, T.AIR);
     G.fill(x0 + 31, top - 1, x0 + 41, top, T.AIR);
     for (let x = x0 + 30; x <= x0 + 42; x++) world.rawBg(x, top, BG.NONE);
-    G.fill(x0 + 28, FG - 3, x0 + 45, FG - 1, T.RUBBLE);
+    G.fill(x0 + 28, FG - 2, x0 + 45, FG - 1, T.RUBBLE);
+    G.fill(x0 + 32, FG - 3, x0 + 40, FG - 3, T.RUBBLE);
     // piliers et pont roulant
-    for (let x = x0 + 12; x < x1; x += 22) G.vline(x, top + 1, FG - 1, T.GIRDER);
+    for (let x = x0 + 12; x < x1; x += 22) G.vline(x, top + 1, FG - 1, T.TRUSS);
     G.hline(x0 + 1, x1 - 1, top + 8, T.GIRDER);
     G.vline(x0 + 56, top + 9, top + 22, T.CHAIN);
     G.fill(x0 + 54, top + 23, x0 + 58, top + 24, T.METAL);
@@ -368,8 +386,10 @@ export function generateWorld(seed = 1729) {
     G.hline(x1 - 24, x1 - 1, FG - 18, T.GRATE);
     G.vline(x1 - 25, FG - 18, FG - 1, T.LADDER);
     // machines à démonter
-    G.fill(x0 + 6, FG - 4, x0 + 10, FG - 1, T.GEARBOX);
-    G.fill(x1 - 14, FG - 3, x1 - 8, FG - 1, T.SCRAP);
+    G.fill(x0 + 6, FG - 2, x0 + 10, FG - 1, T.GEARBOX);
+    G.fill(x0 + 7, FG - 3, x0 + 9, FG - 3, T.GEARBOX);
+    G.fill(x1 - 14, FG - 2, x1 - 8, FG - 1, T.SCRAP);
+    G.fill(x1 - 12, FG - 3, x1 - 10, FG - 3, T.SCRAP);
     G.fill(x1 - 12, FG - 21, x1 - 6, FG - 19, T.SCRAP);
     for (let x = x0 + 3; x < x1 - 2; x += 6) G.vline(x, top + 1, top + 2 + Math.floor(hash1(x, 8) * 9), T.VINE);
     for (let x = x0 + 2; x < x1 - 1; x++) if (hash1(x, 12) > 0.55) world.raw(x, FG, T.MOSSROCK);
@@ -380,20 +400,28 @@ export function generateWorld(seed = 1729) {
   }
   // Cour de gravats et second puits
   scrapMound(780, 790, 2);
-  for (let x = 800; x < 860; x++) {
-    if (hash1(x, 40) > 0.6) {
-      const hh = 1 + Math.floor(hash1(x, 41) * 3);
-      for (let k = 1; k <= hh; k++) world.raw(x, FG - k, T.RUBBLE);
-    }
+  // tas de gravats en pentes douces
+  let prevH = 0;
+  for (let x = 800; x < 862; x++) {
+    let hh = Math.round(clamp((noise1(x / 4, 40) - 0.35) * 6, 0, 3));
+    hh = Math.min(hh, prevH + 1);
+    // dégagé sous les arches des murs effondrés
+    if ((x >= 808 && x <= 817) || (x >= 842 && x <= 851)) hh = Math.min(hh, Math.max(0, Math.abs(x - (x < 830 ? 812.5 : 846.5)) - 2));
+    prevH = hh;
+    for (let k = 1; k <= hh; k++) world.raw(x, FG - k, T.RUBBLE);
   }
   {
     // murs effondrés
-    G.fill(812, FG - 9, 813, FG - 1, T.CONCRETE);
-    G.fill(830, FG - 6, 831, FG - 1, T.BRICK);
-    G.fill(846, FG - 12, 847, FG - 1, T.CONCRETE);
+    // murs effondrés : on passe sous les arches
+    G.fill(812, FG - 11, 813, FG - 4, T.CONCRETE);
+    G.fill(814, FG - 11, 822, FG - 10, T.CONCRETE);
+    G.fill(830, FG - 2, 831, FG - 1, T.BRICK);
+    G.fill(846, FG - 14, 847, FG - 4, T.CONCRETE);
+    for (let x = 805; x <= 850; x++) for (let y = FG - 3; y < FG; y++) if (x === 812 || x === 813 || x === 846 || x === 847) world.raw(x, y, T.AIR);
     G.fill(794, FG, 795, CONDUITES.depth + 35, T.AIR);
     G.fillBg(794, FG, 795, CONDUITES.depth + 35, BG.PIPES);
-    G.vline(794, FG - 1, CONDUITES.depth + 35, T.LADDER);
+    G.vline(794, FG + 1, CONDUITES.depth + 35, T.LADDER);
+    G.hline(794, 795, FG, T.GRATE);
     G.hline(792, 797, FG - 1, T.AIR);
     G.set(793, FG - 1, T.PIPE);
     G.set(796, FG - 1, T.PIPE);
@@ -415,8 +443,8 @@ export function generateWorld(seed = 1729) {
     G.hline(877, 885, 58, T.METAL);
     G.fill(886, 54, 886, 57, T.AIR);
     G.fill(871, 49, 885, 49, T.PIPE);
+    G.vline(875, 59, 186, T.LADDER);
     G.hline(873, 876, 58, T.GRATE);
-    G.vline(875, 55, 186, T.LADDER);
     poi('pompe', 878, 58, { id: 'pompe_barrage' });
     poi('vanne', 871, 58, {});
     poi('plan', 872, 58, { id: 'pompe' });
@@ -467,9 +495,11 @@ export function generateWorld(seed = 1729) {
           world.raw(x, y - k, T.AIR);
           world.rawBg(x, y - k, bg);
         }
-        world.raw(x, y + 1, x % 9 === 0 ? T.GRATE : T.PIPE);
+        // les puits déjà creusés (échelles) restent ouverts
+        if (world.get(x, y + 1) !== T.LADDER) world.raw(x, y + 1, x % 9 === 0 ? T.GRATE : T.PIPE);
         if (world.get(x, y + 1) === T.GRATE) world.raw(x, y + 2, T.PIPE);
-        world.raw(x, y - h, T.PIPE);
+        const up = world.get(x, y - h);
+        if (up !== T.LADDER && up !== T.AIR) world.raw(x, y - h, T.PIPE);
       }
     };
     const yMain = 186;
@@ -510,8 +540,9 @@ export function generateWorld(seed = 1729) {
       if (hash1(x, 81) > 0.86) G.vline(x, yMain - 5, yMain - 5 + Math.floor(hash1(x, 82) * 4), T.VINE);
       if (hash1(x, 83) > 0.8 && world.get(x, yMain + 1) === T.PIPE) world.raw(x, yMain + 1, T.MOSSROCK);
     }
-    G.fill(780, yMain - 2, 783, yMain, T.GEARBOX);
-    G.fill(960, yMain - 3, 966, yMain, T.SCRAP);
+    G.fill(780, yMain - 1, 783, yMain, T.GEARBOX);
+    G.fill(960, yMain - 1, 966, yMain, T.SCRAP);
+    G.fill(962, yMain - 2, 964, yMain - 2, T.SCRAP);
     poi('survivor', 1072, 200, { id: 'sorrel' });
     poi('sample', 655, 169, { id: 'oeuf_coleo' });
     poi('sample', 920, 204, { id: 'graine_arbre' });
@@ -568,8 +599,8 @@ export function generateWorld(seed = 1729) {
     // tours d'échafaudage et pont roulant
     for (const tx of [x0 - 9, x1 + 6]) {
       for (let y = 96; y < 128; y++) {
-        world.raw(tx, y, T.GIRDER);
-        world.raw(tx + 2, y, T.GIRDER);
+        world.raw(tx, y, T.TRUSS);
+        world.raw(tx + 2, y, T.TRUSS);
         world.raw(tx + 1, y, T.LADDER);
       }
     }
@@ -619,7 +650,7 @@ export function generateWorld(seed = 1729) {
     }
     G.vline(ax0, 70, 93, T.LADDER);
     for (let y = 76; y < 94; y++) world.rawBg(ax0, y, BG.NONE);
-    for (let x = ax0 + 10; x < 1400; x += 9) G.vline(x, 76, 93, T.GIRDER);
+    for (let x = ax0 + 10; x < 1400; x += 9) G.vline(x, 76, 93, T.TRUSS);
     poi('lore', 1420, 75, { id: 'aqueduc' });
     poi('cache', 1432, 75, { items: { rouages: 4 } });
 

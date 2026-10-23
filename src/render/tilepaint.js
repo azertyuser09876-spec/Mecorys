@@ -464,6 +464,25 @@ function paintTile(g, px, py, id, x, y, get, pal) {
       g.fillRect(px + 13, py + 1, 1, 1);
       break;
     }
+    case T.TRUSS: {
+      // pilier en treillis, en retrait (non solide)
+      const tc = css(scale(c, 0.62));
+      g.fillStyle = tc;
+      g.fillRect(px + 3, py, 2, S);
+      g.fillRect(px + 11, py, 2, S);
+      g.strokeStyle = tc;
+      g.lineWidth = 1.5;
+      g.beginPath();
+      if (y % 2) {
+        g.moveTo(px + 4, py);
+        g.lineTo(px + 12, py + S);
+      } else {
+        g.moveTo(px + 12, py);
+        g.lineTo(px + 4, py + S);
+      }
+      g.stroke();
+      break;
+    }
     case T.GLASS: {
       g.fillStyle = css(c, 0.35);
       g.fillRect(px, py, S, S);

@@ -32,6 +32,7 @@ export const T = {
   BUILT_LADDER: 26,
   MOSSROCK: 27,
   GEARBOX: 28,
+  TRUSS: 29,
 };
 
 // Arrière-plans (murs derrière le joueur)
@@ -98,6 +99,7 @@ def(T.BONE, { name: 'Ossature', solid: true, natural: true, opaque: true, mat: '
 def(T.GIRDER, { name: 'Poutre', solid: true, opaque: false, mat: 'girder' });
 def(T.BUILT_LADDER, { name: 'Échelle', climb: true, mat: 'wood', built: true, tool: 'main', time: 0.3, yields: { fibre: 1 } });
 def(T.MOSSROCK, { name: 'Roche moussue', solid: true, natural: true, opaque: true, mat: 'moss', tool: 'main', time: 0.8, yields: { biomasse: 1 } });
+def(T.TRUSS, { name: 'Pilier', mat: 'girder' });
 def(T.GEARBOX, { name: 'Mécanisme', solid: true, opaque: true, mat: 'rust', tool: 'main', time: 2.2, yields: { ferraille: 1, rouages: 1 } });
 
 export const TILES = D;

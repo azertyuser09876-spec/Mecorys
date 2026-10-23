@@ -151,6 +151,13 @@ export class Player {
       this.state = 'air';
       this.fallStartY = this.y;
     }
+    // descendre une échelle qui part sous une passerelle
+    if (this.state !== 'climb' && this.onGround && my > 0 && !climbG && this.onPlatform(grids) && climbAt(grids, this.cx, this.y + this.h + 10)) {
+      this.state = 'climb';
+      this.y += 4;
+      this.vx = this.vy = 0;
+      this.dropTimer = 0;
+    }
     if (this.state !== 'climb' && this.state !== 'swim' && climbG && my !== 0 && this.dropTimer <= 0) {
       // On s'agrippe à une échelle ou une liane
       if (!(my > 0 && this.onGround && !climbAt(grids, this.cx, this.y + this.h + 4))) {

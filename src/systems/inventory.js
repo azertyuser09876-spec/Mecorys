@@ -10,6 +10,8 @@ export class Inventory {
     this.plans = new Set(); // plans connus
     this.foundPlans = new Set(); // plans trouvés (avantage de 5 %)
     this.items = {}; // objets uniques (clés, pièces)
+    this.seeds = {}; // sachets de graines par espèce végétale
+    this.eggs = {}; // œufs et jeunes prêts à être relâchés
   }
 
   add(id, n = 1) {
@@ -59,6 +61,8 @@ export class Inventory {
       plans: [...this.plans],
       foundPlans: [...this.foundPlans],
       items: this.items,
+      seeds: this.seeds,
+      eggs: this.eggs,
     };
   }
 
@@ -70,6 +74,8 @@ export class Inventory {
     inv.plans = new Set(o.plans || []);
     inv.foundPlans = new Set(o.foundPlans || []);
     Object.assign(inv.items, o.items || {});
+    Object.assign(inv.seeds, o.seeds || {});
+    Object.assign(inv.eggs, o.eggs || {});
     return inv;
   }
 }

@@ -2,7 +2,7 @@
 import { MODULES, GRID_W, GRID_H } from '../data/modules.js';
 
 const BASE_SPEED = { roue: 70, chenille: 36, patte: 46, ballon: 44 };
-const STEP = { roue: 0, chenille: 16, patte: 32, ballon: 0 };
+const STEP = { roue: 16, chenille: 32, patte: 32, ballon: 0 };
 
 export function cellAt(cells, x, y) {
   return cells.find((c) => c.x === x && c.y === y) || null;
